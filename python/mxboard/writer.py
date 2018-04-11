@@ -499,6 +499,18 @@ class SummaryWriter(object):
         """
         self._file_writer.add_graph(_net2pb(net=net))
 
+    def add_summary(self, *args):
+        if len(args) == 0:
+            return
+        from .proto.summary_pb2 import Summary
+        val_list = []
+        for summ in args:
+            if not isinstance(summ, Summary):
+                raise TypeError('expected Summary type, while received '
+                                'type {}'.format(str(type(summ))))
+            val_list += summ.value
+        self._file_writer.add_summary(Summary(value=val_list))
+
     def flush(self):
         """Flushes pending events to the file."""
         self._file_writer.flush()
